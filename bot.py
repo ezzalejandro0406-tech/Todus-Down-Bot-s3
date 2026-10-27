@@ -59,18 +59,28 @@ except ImportError:
 
 
 # ═══════════════════════════════════════════════════════════════
-#  CONFIGURACIÓN EMBEBIDA (VALORES INTEGRADOS DIRECTAMENTE)
-#  No necesitas configurar ninguna variable en Railway / VPS / Hosting.
+#  CONFIGURACIÓN COMPATIBLE — conserva nombres nuevos y antiguos
+#  Los secretos se leen del entorno; nunca se incrustan en el código.
 # ═══════════════════════════════════════════════════════════════
-TODUS_BASE_URL = os.getenv("TODUS_BASE_URL", "https://s3.todus.cu/stream")
-TMPDIR = os.getenv("TMPDIR", "/tmp")
-# Las credenciales se leen exclusivamente desde secretos del entorno.
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+def _first_env(*names: str, default: str = "") -> str:
+    for name in names:
+        value = os.getenv(name, "").strip()
+        if value:
+            return value
+    return default
+
+
+TODUS_BASE_URL = _first_env("TODUS_BASE_URL", default="https://s3.todus.cu/stream")
+TMPDIR = _first_env("TMPDIR", default="/tmp")
+# Compatibilidad: Railway puede tener guardado el nombre antiguo.
+TELEGRAM_BOT_TOKEN = _first_env(
+    "TELEGRAM_BOT_TOKEN", "TOKEN_BOT_DE_TELEGRAM", "BOT_TOKEN", "TELEGRAM_TOKEN"
+)
 TOKEN_BOT_DE_TELEGRAM = TELEGRAM_BOT_TOKEN
-TELEGRAM_BACKUP_CHAT_ID = os.getenv("TELEGRAM_BACKUP_CHAT_ID", os.getenv("BACKUP_CHAT_ID", "")).strip()
-TELEGRAM_API_ID = int(os.getenv("TELEGRAM_API_ID", "0") or 0)
+TELEGRAM_BACKUP_CHAT_ID = _first_env("TELEGRAM_BACKUP_CHAT_ID", "BACKUP_CHAT_ID")
+TELEGRAM_API_ID = int(_first_env("TELEGRAM_API_ID", "ID_API_TELEGRAM", default="0") or 0)
 ID_API_TELEGRAM = TELEGRAM_API_ID
-TELEGRAM_API_HASH = os.getenv("TELEGRAM_API_HASH", "").strip()
+TELEGRAM_API_HASH = _first_env("TELEGRAM_API_HASH", "API_HASH")
 REQUIRED_GROUP = os.getenv("REQUIRED_GROUP", "@videogameplay0406")
 REQUIRED_CHANNEL = os.getenv("REQUIRED_CHANNEL", "@gg_no_root")
 OWNER_TELEGRAM_ID = int(os.getenv("OWNER_TELEGRAM_ID", "0") or 0)
@@ -5036,7 +5046,11 @@ async def post_shutdown(application: Application) -> None:
 def main() -> None:
     token = TELEGRAM_BOT_TOKEN.strip()
     if not token:
-        raise RuntimeError("Falta TELEGRAM_BOT_TOKEN en el entorno")
+        raise RuntimeError(
+            "Falta el token del bot. Configura TELEGRAM_BOT_TOKEN "
+            "(también se aceptan TOKEN_BOT_DE_TELEGRAM, BOT_TOKEN o TELEGRAM_TOKEN) "
+            "en Railway → Variables/Secrets."
+        )
 
     defaults = Defaults(parse_mode=ParseMode.HTML)
     application = (

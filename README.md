@@ -32,7 +32,7 @@ Bot privado de Telegram que recibe documentos, vídeos, audios, fotos, reenvíos
 <!-- Cambio documental de verificación de persistencia; no modifica la ejecución del bot. -->
 <!-- Prueba de deploy inocua: no modifica el comportamiento del bot. -->
 
-- `TELEGRAM_BOT_TOKEN`: token del bot creado con `@BotFather`. Es obligatorio.
+- `TELEGRAM_BOT_TOKEN`: token del bot creado con `@BotFather`. Es obligatorio. Por compatibilidad también se aceptan `TOKEN_BOT_DE_TELEGRAM`, `BOT_TOKEN` y `TELEGRAM_TOKEN`; configura solo uno.
 - `TELEGRAM_BACKUP_CHAT_ID`: ID numérico o `@usuario` del canal o grupo de Telegram donde se publicará y fijará el respaldo cifrado. También se aceptan `BACKUP_CHAT_ID` o, como fallback, `TELEGRAM_CHANNEL_ID`. El bot debe poder enviar documentos allí; para fijar y reemplazar el mismo mensaje necesita permisos de fijado/edición.
 - `TELEGRAM_BACKUP_INTERVAL_SECONDS`: intervalo del respaldo automático; por defecto son 300 segundos y el mínimo es 30.
 - `TELEGRAM_API_ID` y `TELEGRAM_API_HASH`: opcionales; permiten descargar reenvíos de Telegram de más de aproximadamente 20 MiB. No sustituyen `TELEGRAM_BOT_TOKEN`.
