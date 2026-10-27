@@ -69,26 +69,30 @@ def _first_env(*names: str, default: str = "") -> str:
             return value
     return default
 
-TODUS_BASE_URL = "https://s3.todus.cu/stream"
-TMPDIR = "/tmp"
-TOKEN_BOT_DE_TELEGRAM = "8880272278:AAFspZahBMgFKLCtjLeLE73-p2btyFyESGE"
-TELEGRAM_BOT_TOKEN = TOKEN_BOT_DE_TELEGRAM
-TELEGRAM_BACKUP_CHAT_ID = "-1003809444295"
-ID_API_TELEGRAM = 22012234
-TELEGRAM_API_ID = ID_API_TELEGRAM
-TELEGRAM_API_HASH = "cb5cbb3ab5b6bcf0bfc3df608eef869f"
-REQUIRED_GROUP = "@videogameplay0406"
-REQUIRED_CHANNEL = "@gg_no_root"
-OWNER_TELEGRAM_ID = 7935796405
-MAX_TRANSFER_HOURS = 24
-MAX_FILE_MB_PREMIUM = 0       # 0 = Ilimitado para Premium
-MAX_FILE_MB_FREE = 2048       # 2048 MB = 2 GB para usuarios Gratis
-MAX_CONCURRENT_UPLOADS = 8
-LOG_LEVEL = "INFO"
-GROUP_JOIN_URL = "https://t.me/videogameplay0406"
-DATABASE_PATH = "./data/premium.sqlite3"
-CHANNEL_JOIN_URL = "https://t.me/gg_no_root"
 
+TODUS_BASE_URL = _first_env("TODUS_BASE_URL", default="https://s3.todus.cu/stream")
+TMPDIR = _first_env("TMPDIR", default="/tmp")
+# Compatibilidad: Railway puede tener guardado el nombre antiguo.
+TELEGRAM_BOT_TOKEN = _first_env(
+    "TELEGRAM_BOT_TOKEN", "TOKEN_BOT_DE_TELEGRAM", "BOT_TOKEN", "TELEGRAM_TOKEN"
+)
+TOKEN_BOT_DE_TELEGRAM = TELEGRAM_BOT_TOKEN
+TELEGRAM_BACKUP_CHAT_ID = _first_env("TELEGRAM_BACKUP_CHAT_ID", "BACKUP_CHAT_ID")
+TELEGRAM_API_ID = int(_first_env("TELEGRAM_API_ID", "ID_API_TELEGRAM", default="0") or 0)
+ID_API_TELEGRAM = TELEGRAM_API_ID
+TELEGRAM_API_HASH = _first_env("TELEGRAM_API_HASH", "API_HASH")
+REQUIRED_GROUP = os.getenv("REQUIRED_GROUP", "@videogameplay0406")
+REQUIRED_CHANNEL = os.getenv("REQUIRED_CHANNEL", "@gg_no_root")
+OWNER_TELEGRAM_ID = int(os.getenv("OWNER_TELEGRAM_ID", "0") or 0)
+MAX_TRANSFER_HOURS = int(os.getenv("MAX_TRANSFER_HOURS", "24") or 24)
+MAX_FILE_MB_PREMIUM = int(os.getenv("MAX_FILE_MB_PREMIUM", "0") or 0)
+MAX_FILE_MB_FREE = int(os.getenv("MAX_FILE_MB_FREE", "5120") or 5120)
+MAX_CONCURRENT_UPLOADS = int(os.getenv("MAX_CONCURRENT_UPLOADS", "2") or 2)
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+GROUP_JOIN_URL = os.getenv("GROUP_JOIN_URL", "https://t.me/videogameplay0406")
+BOT_DATA_DIR = os.getenv("BOT_DATA_DIR", "./data")
+DATABASE_PATH = os.getenv("DATABASE_PATH", str(Path(BOT_DATA_DIR) / "premium.sqlite3"))
+CHANNEL_JOIN_URL = os.getenv("CHANNEL_JOIN_URL", "https://t.me/gg_no_root")
 # Configurar logging con el nivel embebido
 logging.basicConfig(
     level=getattr(logging, LOG_LEVEL.upper(), logging.INFO),
@@ -258,14 +262,14 @@ PLANS = {
         "quota_period_days": 1,
     },
     "premium": {
-        "name": "ᴘʀᴇᴍɪᴜᴍ",
-        "display": "Plan Premium",
-        "daily_bytes": 10 * GIB,
-        "daily_label": "10.00 GB",
+        "name": "ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ",
+        "display": "VIP Premium",
+        "daily_bytes": 20 * GIB,
+        "daily_label": "20.00 GB",
         "badge": "👑",
-        "rank": 1,
-        "price": "250$",
-        "price_value": 250,
+        "rank": 4,
+        "price": "1000$",
+        "price_value": 1000,
         "storage_hours": 72,
         "storage_label": "72 horas",
         "quota_period_days": 1,
@@ -273,8 +277,8 @@ PLANS = {
     "vip": {
         "name": "ᴠɪᴘ",
         "display": "Plan VIP",
-        "daily_bytes": 25 * GIB,
-        "daily_label": "25.00 GB",
+        "daily_bytes": 10 * GIB,
+        "daily_label": "10.00 GB",
         "badge": "⭐",
         "rank": 2,
         "price": "500$",
@@ -286,8 +290,8 @@ PLANS = {
     "vip_basic": {
         "name": "ᴠɪᴘ",
         "display": "Plan VIP",
-        "daily_bytes": 25 * GIB,
-        "daily_label": "25.00 GB",
+        "daily_bytes": 10 * GIB,
+        "daily_label": "10.00 GB",
         "badge": "⭐",
         "rank": 2,
         "price": "500$",
@@ -299,8 +303,8 @@ PLANS = {
     "vip_medium": {
         "name": "ᴠɪᴘ ᴍᴇᴅɪᴏ",
         "display": "VIP Medio",
-        "daily_bytes": 35 * GIB,
-        "daily_label": "35.00 GB",
+        "daily_bytes": 15 * GIB,
+        "daily_label": "15.00 GB",
         "badge": "💎",
         "rank": 3,
         "price": "750$",
@@ -310,14 +314,14 @@ PLANS = {
         "quota_period_days": 1,
     },
     "ultra": {
-        "name": "ᴜʟᴛʀᴀ",
-        "display": "Plan Ultra",
-        "daily_bytes": float('inf'),
+        "name": "ʜᴏɴᴏʀ ɪɴꜰɪɴɪᴛᴏ",
+        "display": "Honor infinito",
+        "daily_bytes": float("inf"),
         "daily_label": "Ilimitado (∞ GB)",
-        "badge": "🔥",
-        "rank": 4,
-        "price": "1000$",
-        "price_value": 1000,
+        "badge": "🜲",
+        "rank": 999,
+        "price": "∞",
+        "price_value": 0,
         "storage_hours": 72,
         "storage_label": "72 horas",
         "quota_period_days": 1,
@@ -384,6 +388,11 @@ USERS_DATA_FILE = str(DATA_DIR / "users.json")
 ADMIN_AUDIT_FILE = str(DATA_DIR / "admin_audit.json")
 TELEGRAM_AUTH_DIR = DATA_DIR / "telegram_auth"
 CLOUD_CACHE_DIR = DATA_DIR / "cloud_cache"
+# Renovación preventiva: ToDus puede eliminar objetos antes del TTL anunciado.
+# El enlace se renueva antes de vencer y conserva el caché hasta borrar el historial.
+CLOUD_AUTO_RENEW = _first_env("CLOUD_AUTO_RENEW", default="true").lower() in {"1", "true", "yes", "on"}
+CLOUD_RENEW_BEFORE_SECONDS = max(60, int(_first_env("CLOUD_RENEW_BEFORE_SECONDS", default="300") or 300))
+CLOUD_CHECK_INTERVAL_SECONDS = max(15, int(_first_env("CLOUD_CHECK_INTERVAL_SECONDS", default="30") or 30))
 CLOUD_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -1080,7 +1089,9 @@ def get_user_plan_entry(user_id: int) -> dict:
 
 
 def get_user_plan(user_id: int) -> str:
-    return get_user_plan_entry(user_id).get("plan", "free")
+    raw = get_user_plan_entry(user_id).get("plan", "free")
+    # Compatibilidad con nombres de planes de versiones anteriores.
+    return {"vip": "vip_basic", "ultra": "owner", "honor": "owner"}.get(raw, raw)
 
 
 def get_user_queue_limit(user_id: int) -> int:
@@ -1178,7 +1189,8 @@ async def broadcast_admin_message(bot_obj, body: str) -> tuple[int, int, int]:
 
 
 def get_plan_info(plan_key: str) -> dict:
-    return PLANS.get(plan_key, PLANS["free"])
+    canonical = {"vip": "vip_basic", "ultra": "owner", "honor": "owner"}.get(plan_key, plan_key)
+    return PLANS.get(canonical, PLANS["free"])
 
 
 def _today_key() -> str:
@@ -1442,6 +1454,10 @@ def expire_cloud_files() -> int:
                     delete_from_todus_s3(url)
                 except Exception:
                     success = False
+            # Con auto-renovación, conservar el caché y reintentar en el siguiente ciclo
+            # si ToDus estuvo caído justo cuando tocaba renovar.
+            if CLOUD_AUTO_RENEW and entry.get("cached_paths"):
+                continue
             # Purgar caché local del disco al culminar el tiempo del plan
             for cp in entry.get("cached_paths", []):
                 try:
@@ -1495,10 +1511,15 @@ async def _silently_update_message_keyboard(
 
 
 def renew_prematurely_deleted_cloud_files(application: Application | None = None) -> int:
-    """Detecta archivos borrados en ToDus S3 antes de culminar el tiempo del plan
-    (ej. plan Free de 12h borrado en ToDus a las 2h) y los vuelve a subir en silencio,
-    renovando el archivo y manteniendo el servicio 100% activo sin fallos.
+    """Renueva enlaces antes de que ToDus los elimine y recupera los ya caídos.
+
+    El TTL del plan es la duración de cada enlace individual. Mientras exista el
+    caché local persistente, el guardián crea un nuevo enlace antes de vencer y
+    actualiza ``expires_at``. Así el archivo puede permanecer disponible durante
+    todo el tiempo necesario sin cobrar cuota por la renovación interna.
     """
+    if not CLOUD_AUTO_RENEW:
+        return 0
     data = all_task_history()
     now = datetime.now(timezone.utc)
     renewed_count = 0
@@ -1509,79 +1530,71 @@ def renew_prematurely_deleted_cloud_files(application: Application | None = None
             continue
         try:
             user_id = int(user_id_str)
-        except ValueError:
+        except (TypeError, ValueError):
             continue
 
         for entry in entries:
             if not isinstance(entry, dict) or not entry.get("expires_at"):
                 continue
             try:
-                exp_dt = datetime.fromisoformat(entry["expires_at"])
+                exp_dt = datetime.fromisoformat(str(entry["expires_at"]))
                 if exp_dt.tzinfo is None:
                     exp_dt = exp_dt.replace(tzinfo=timezone.utc)
             except Exception:
                 continue
-
-            # Si ya culminó formalmente el plan, no se renueva
-            if exp_dt <= now:
-                continue
-
-            urls = entry.get("urls", [])
             cached_paths = entry.get("cached_paths", [])
-            if not urls or not cached_paths:
+            urls = entry.get("urls", [])
+            if not isinstance(cached_paths, list) or not cached_paths:
+                continue
+            if not isinstance(urls, list):
+                urls = []
+
+            expired = exp_dt <= now
+            near_expiry = (exp_dt - now).total_seconds() <= CLOUD_RENEW_BEFORE_SECONDS
+            missing = False
+            if urls and not expired and not near_expiry:
+                # Detectar eliminación prematura incluso fuera de la ventana.
+                missing = any(not check_cloud_url_healthy(url) for url in urls)
+            if not (expired or near_expiry or missing):
                 continue
 
-            # Comprobar si ToDus borró el enlace antes de tiempo
-            needs_renewal = False
-            for url in urls:
-                if not check_cloud_url_healthy(url):
-                    needs_renewal = True
+            reason = "vencimiento próximo" if near_expiry and not expired else ("enlace ausente" if missing else "enlace vencido")
+            log.info("Cloud Guardian: renovando '%s' (user %s, %s)", entry.get("filename"), user_id, reason)
+            new_urls = []
+            renewal_success = True
+            for idx, cp_str in enumerate(cached_paths):
+                cp = Path(str(cp_str))
+                if not cp.is_file() or cp.stat().st_size == 0:
+                    renewal_success = False
+                    log.warning("Cloud Guardian: caché ausente para task=%s: %s", entry.get("task_id"), cp)
+                    break
+                try:
+                    part_fname = entry.get("filename", "file.bin")
+                    if len(cached_paths) > 1:
+                        part_fname = f"{part_fname}.part{idx + 1}"
+                    new_url, _ = upload_to_todus_s3(
+                        path=cp,
+                        download_name=part_fname,
+                        telegram_user_id=user_id,
+                        timeout_seconds=7200,
+                    )
+                    new_urls.append(new_url)
+                except Exception as err:
+                    log.warning("Cloud Guardian: fallo al renovar task=%s: %s", entry.get("task_id"), err)
+                    renewal_success = False
                     break
 
-            if needs_renewal:
-                log.info(
-                    "🛡️ Cloud Guardian: Archivo '%s' (user %s) borrado antes de tiempo en ToDus. Re-subiendo en silencio...",
-                    entry.get("filename"), user_id,
-                )
-                new_urls = []
-                renewal_success = True
-                for idx, cp_str in enumerate(cached_paths):
-                    cp = Path(cp_str)
-                    if not cp.is_file() or cp.stat().st_size == 0:
-                        renewal_success = False
-                        break
-                    try:
-                        part_fname = entry.get("filename", "file.bin")
-                        if len(cached_paths) > 1:
-                            part_fname = f"{part_fname}.part{idx+1}"
-                        new_url, _ = upload_to_todus_s3(
-                            path=cp,
-                            download_name=part_fname,
-                            telegram_user_id=user_id,
-                            timeout_seconds=7200,
-                        )
-                        new_urls.append(new_url)
-                    except Exception as err:
-                        log.warning("Fallo al re-subir silenciosamente a ToDus: %s", err)
-                        renewal_success = False
-                        break
-
-                if renewal_success and new_urls:
-                    entry["urls"] = new_urls
-                    entry["silently_renewed_at"] = now.isoformat()
-                    renewed_count += 1
-                    changed = True
-                    log.info("✅ Cloud Guardian: Archivo renovado con éxito para usuario %s. Nuevos URLs: %s", user_id, new_urls)
-                    if application and entry.get("chat_id") and entry.get("message_id"):
-                        asyncio.create_task(
-                            _silently_update_message_keyboard(
-                                application,
-                                entry["chat_id"],
-                                entry["message_id"],
-                                entry.get("task_id", ""),
-                                new_urls,
-                            )
-                        )
+            if renewal_success and new_urls:
+                entry["urls"] = new_urls
+                entry["expires_at"] = storage_expiry(user_id, now).isoformat()
+                entry["silently_renewed_at"] = now.isoformat()
+                entry["renewal_count"] = int(entry.get("renewal_count", 0) or 0) + 1
+                renewed_count += 1
+                changed = True
+                if application and entry.get("chat_id") and entry.get("message_id"):
+                    asyncio.create_task(_silently_update_message_keyboard(
+                        application, entry["chat_id"], entry["message_id"], entry.get("task_id", ""), new_urls
+                    ))
 
     if changed:
         _save_json(HISTORY_DATA_FILE, data)
@@ -1621,7 +1634,7 @@ async def cloud_expiration_monitor(application: Application) -> None:
             raise
         except Exception as exc:
             log.warning("Error en monitor Cloud Guardian: %s", exc)
-        await asyncio.sleep(60)
+        await asyncio.sleep(CLOUD_CHECK_INTERVAL_SECONDS)
 
 
 def clear_all_task_history() -> int:
@@ -2634,7 +2647,7 @@ def plans_keyboard(user_id: int, bot_username: str | None = None) -> InlineKeybo
 def plan_purchase_text(user_id: int) -> str:
     balance = get_user_balance(user_id)
     lines = [f"💸 Saldo disponible: {balance}$", "", "Solo puedes confirmar un plan si tienes el saldo completo.", ""]
-    for key in ("premium", "vip", "ultra"):
+    for key in ("vip_basic", "vip_medium", "premium"):
         plan = PLANS[key]
         state = "✅ Disponible" if balance >= plan["price_value"] else f"🔒 Faltan {plan['price_value'] - balance}$"
         lines.extend([
@@ -2650,7 +2663,7 @@ def plan_purchase_text(user_id: int) -> str:
 def plan_purchase_keyboard(user_id: int) -> InlineKeyboardMarkup:
     balance = get_user_balance(user_id)
     rows = []
-    for key in ("premium", "vip", "ultra"):
+    for key in ("vip_basic", "vip_medium", "premium"):
         plan = PLANS[key]
         if balance >= plan["price_value"]:
             rows.append([btn(f"✅ {plan['display']} · {plan['price']}", callback_data=f"plans:confirm:{key}")])
