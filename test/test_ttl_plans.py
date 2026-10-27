@@ -18,6 +18,17 @@ class StorageTtlPlanTests(unittest.TestCase):
         actual = {key: bot.get_plan_info(key)["storage_hours"] for key in expected}
         self.assertEqual(actual, expected)
 
+    def test_daily_quota_matches_requested_plan_table(self):
+        expected = {
+            "free": 5 * bot.GIB,
+            "vip_basic": 10 * bot.GIB,
+            "vip_medium": 15 * bot.GIB,
+            "premium": 20 * bot.GIB,
+            "owner": float("inf"),
+        }
+        actual = {key: bot.get_plan_info(key)["daily_bytes"] for key in expected}
+        self.assertEqual(actual, expected)
+
     def test_storage_expiry_uses_active_plan(self):
         from datetime import datetime, timezone
         from unittest.mock import patch
