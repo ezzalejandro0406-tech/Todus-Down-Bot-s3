@@ -69,30 +69,26 @@ def _first_env(*names: str, default: str = "") -> str:
             return value
     return default
 
+TODUS_BASE_URL = "https://s3.todus.cu/stream"
+TMPDIR = "/tmp"
+TOKEN_BOT_DE_TELEGRAM = "8880272278:AAFspZahBMgFKLCtjLeLE73-p2btyFyESGE"
+TELEGRAM_BOT_TOKEN = TOKEN_BOT_DE_TELEGRAM
+TELEGRAM_BACKUP_CHAT_ID = "-1003809444295"
+ID_API_TELEGRAM = 22012234
+TELEGRAM_API_ID = ID_API_TELEGRAM
+TELEGRAM_API_HASH = "cb5cbb3ab5b6bcf0bfc3df608eef869f"
+REQUIRED_GROUP = "@videogameplay0406"
+REQUIRED_CHANNEL = "@gg_no_root"
+OWNER_TELEGRAM_ID = 7935796405
+MAX_TRANSFER_HOURS = 24
+MAX_FILE_MB_PREMIUM = 0       # 0 = Ilimitado para Premium
+MAX_FILE_MB_FREE = 2048       # 2048 MB = 2 GB para usuarios Gratis
+MAX_CONCURRENT_UPLOADS = 8
+LOG_LEVEL = "INFO"
+GROUP_JOIN_URL = "https://t.me/videogameplay0406"
+DATABASE_PATH = "./data/premium.sqlite3"
+CHANNEL_JOIN_URL = "https://t.me/gg_no_root"
 
-TODUS_BASE_URL = _first_env("TODUS_BASE_URL", default="https://s3.todus.cu/stream")
-TMPDIR = _first_env("TMPDIR", default="/tmp")
-# Compatibilidad: Railway puede tener guardado el nombre antiguo.
-TELEGRAM_BOT_TOKEN = _first_env(
-    "TELEGRAM_BOT_TOKEN", "TOKEN_BOT_DE_TELEGRAM", "BOT_TOKEN", "TELEGRAM_TOKEN"
-)
-TOKEN_BOT_DE_TELEGRAM = TELEGRAM_BOT_TOKEN
-TELEGRAM_BACKUP_CHAT_ID = _first_env("TELEGRAM_BACKUP_CHAT_ID", "BACKUP_CHAT_ID")
-TELEGRAM_API_ID = int(_first_env("TELEGRAM_API_ID", "ID_API_TELEGRAM", default="0") or 0)
-ID_API_TELEGRAM = TELEGRAM_API_ID
-TELEGRAM_API_HASH = _first_env("TELEGRAM_API_HASH", "API_HASH")
-REQUIRED_GROUP = os.getenv("REQUIRED_GROUP", "@videogameplay0406")
-REQUIRED_CHANNEL = os.getenv("REQUIRED_CHANNEL", "@gg_no_root")
-OWNER_TELEGRAM_ID = int(os.getenv("OWNER_TELEGRAM_ID", "0") or 0)
-MAX_TRANSFER_HOURS = int(os.getenv("MAX_TRANSFER_HOURS", "24") or 24)
-MAX_FILE_MB_PREMIUM = int(os.getenv("MAX_FILE_MB_PREMIUM", "0") or 0)
-MAX_FILE_MB_FREE = int(os.getenv("MAX_FILE_MB_FREE", "2048") or 2048)
-MAX_CONCURRENT_UPLOADS = int(os.getenv("MAX_CONCURRENT_UPLOADS", "2") or 2)
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
-GROUP_JOIN_URL = os.getenv("GROUP_JOIN_URL", "https://t.me/videogameplay0406")
-BOT_DATA_DIR = os.getenv("BOT_DATA_DIR", "./data")
-DATABASE_PATH = os.getenv("DATABASE_PATH", str(Path(BOT_DATA_DIR) / "premium.sqlite3"))
-CHANNEL_JOIN_URL = os.getenv("CHANNEL_JOIN_URL", "https://t.me/gg_no_root")
 # Configurar logging con el nivel embebido
 logging.basicConfig(
     level=getattr(logging, LOG_LEVEL.upper(), logging.INFO),
