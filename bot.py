@@ -59,17 +59,9 @@ except ImportError:
 
 
 # ═══════════════════════════════════════════════════════════════
-#  CONFIGURACIÓN COMPATIBLE — conserva nombres nuevos y antiguos
-#  Los secretos se leen del entorno; nunca se incrustan en el código.
+#  CONFIGURACIÓN EMBEBIDA (VALORES INTEGRADOS DIRECTAMENTE)
+#  No necesitas configurar ninguna variable en Railway / VPS / Hosting.
 # ═══════════════════════════════════════════════════════════════
-def _first_env(*names: str, default: str = "") -> str:
-    for name in names:
-        value = os.getenv(name, "").strip()
-        if value:
-            return value
-    return default
-
-
 TODUS_BASE_URL = "https://s3.todus.cu/stream"
 TMPDIR = "/tmp"
 TOKEN_BOT_DE_TELEGRAM = "8880272278:AAFspZahBMgFKLCtjLeLE73-p2btyFyESGE"
@@ -89,6 +81,7 @@ LOG_LEVEL = "INFO"
 GROUP_JOIN_URL = "https://t.me/videogameplay0406"
 DATABASE_PATH = "./data/premium.sqlite3"
 CHANNEL_JOIN_URL = "https://t.me/gg_no_root"
+
 # Configurar logging con el nivel embebido
 logging.basicConfig(
     level=getattr(logging, LOG_LEVEL.upper(), logging.INFO),
@@ -247,8 +240,8 @@ PLANS = {
     "free": {
         "name": "ɢʀᴀᴛɪꜱ",
         "display": "Plan Gratis",
-        "daily_bytes": (MAX_FILE_MB_FREE * MIB) if MAX_FILE_MB_FREE > 0 else (5 * GIB),
-        "daily_label": f"{MAX_FILE_MB_FREE / 1024:.2f} GB" if MAX_FILE_MB_FREE > 0 else "2.00 GB",
+        "daily_bytes": 5 * GIB,
+        "daily_label": "5.00 GB",
         "badge": "🆓",
         "rank": 0,
         "price": "0$",
@@ -257,41 +250,28 @@ PLANS = {
         "storage_label": "12 horas",
         "quota_period_days": 1,
     },
-    "premium": {
-        "name": "ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ",
-        "display": "VIP Premium",
-        "daily_bytes": 20 * GIB,
-        "daily_label": "20.00 GB",
-        "badge": "👑",
-        "rank": 4,
-        "price": "1000$",
-        "price_value": 1000,
-        "storage_hours": 72,
-        "storage_label": "72 horas",
-        "quota_period_days": 1,
-    },
     "vip": {
-        "name": "ᴠɪᴘ",
-        "display": "Plan VIP",
+        "name": "ᴠɪᴘ ʙáꜱɪᴄᴏ",
+        "display": "VIP Básico",
         "daily_bytes": 10 * GIB,
         "daily_label": "10.00 GB",
         "badge": "⭐",
-        "rank": 2,
-        "price": "500$",
-        "price_value": 500,
+        "rank": 1,
+        "price": "100$",
+        "price_value": 100,
         "storage_hours": 24,
         "storage_label": "24 horas",
         "quota_period_days": 1,
     },
     "vip_basic": {
-        "name": "ᴠɪᴘ",
-        "display": "Plan VIP",
+        "name": "ᴠɪᴘ ʙáꜱɪᴄᴏ",
+        "display": "VIP Básico",
         "daily_bytes": 10 * GIB,
         "daily_label": "10.00 GB",
         "badge": "⭐",
-        "rank": 2,
-        "price": "500$",
-        "price_value": 500,
+        "rank": 1,
+        "price": "100$",
+        "price_value": 100,
         "storage_hours": 24,
         "storage_label": "24 horas",
         "quota_period_days": 1,
@@ -302,22 +282,35 @@ PLANS = {
         "daily_bytes": 15 * GIB,
         "daily_label": "15.00 GB",
         "badge": "💎",
-        "rank": 3,
-        "price": "750$",
-        "price_value": 750,
+        "rank": 2,
+        "price": "250$",
+        "price_value": 250,
         "storage_hours": 48,
         "storage_label": "48 horas",
         "quota_period_days": 1,
     },
+    "premium": {
+        "name": "ᴘʀᴇᴍɪᴜᴍ",
+        "display": "Plan Premium",
+        "daily_bytes": 20 * GIB,
+        "daily_label": "20.00 GB",
+        "badge": "👑",
+        "rank": 3,
+        "price": "500$",
+        "price_value": 500,
+        "storage_hours": 72,
+        "storage_label": "72 horas",
+        "quota_period_days": 1,
+    },
     "ultra": {
-        "name": "ʜᴏɴᴏʀ ɪɴꜰɪɴɪᴛᴏ",
-        "display": "Honor infinito",
-        "daily_bytes": float("inf"),
+        "name": "ᴜʟᴛʀᴀ",
+        "display": "Plan Ultra",
+        "daily_bytes": float('inf'),
         "daily_label": "Ilimitado (∞ GB)",
-        "badge": "🜲",
-        "rank": 999,
-        "price": "∞",
-        "price_value": 0,
+        "badge": "🔥",
+        "rank": 4,
+        "price": "1000$",
+        "price_value": 1000,
         "storage_hours": 72,
         "storage_label": "72 horas",
         "quota_period_days": 1,
@@ -339,11 +332,11 @@ PLANS = {
 
 PLAN_QUEUE_LIMITS = {
     "free": 2,
-    "premium": 6,
-    "vip": 10,
-    "vip_basic": 10,
-    "vip_medium": 15,
-    "ultra": 30,
+    "vip": 8,
+    "vip_basic": 8,
+    "vip_medium": 16,
+    "premium": 32,
+    "ultra": 32,
     "owner": 10**9,
 }
 
@@ -353,7 +346,6 @@ PLAN_QUEUE_LIMITS = {
 # ═══════════════════════════════════════════════════════════════
 def _get_data_dir() -> Path:
     candidates = [
-        os.getenv("BOT_DATA_DIR", ""),
         os.path.dirname(DATABASE_PATH) or "./data",
         "/data",
         str(Path.home() / ".jk_bot"),
@@ -384,11 +376,6 @@ USERS_DATA_FILE = str(DATA_DIR / "users.json")
 ADMIN_AUDIT_FILE = str(DATA_DIR / "admin_audit.json")
 TELEGRAM_AUTH_DIR = DATA_DIR / "telegram_auth"
 CLOUD_CACHE_DIR = DATA_DIR / "cloud_cache"
-# Renovación preventiva: ToDus puede eliminar objetos antes del TTL anunciado.
-# El enlace se renueva antes de vencer y conserva el caché hasta borrar el historial.
-CLOUD_AUTO_RENEW = _first_env("CLOUD_AUTO_RENEW", default="true").lower() in {"1", "true", "yes", "on"}
-CLOUD_RENEW_BEFORE_SECONDS = max(60, int(_first_env("CLOUD_RENEW_BEFORE_SECONDS", default="300") or 300))
-CLOUD_CHECK_INTERVAL_SECONDS = max(15, int(_first_env("CLOUD_CHECK_INTERVAL_SECONDS", default="30") or 30))
 CLOUD_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -455,18 +442,11 @@ async def backup_to_telegram(
                 if item.is_file() and not item.name.endswith(".tmp"):
                     if not any(item.resolve() == p.resolve() for p, _ in files_to_pack):
                         files_to_pack.append((item, item.name))
-            # El caché es necesario para que Cloud Guardian pueda restaurar un
-            # objeto borrado después de un redeploy. Se guarda junto al historial.
-            cache_dir = layout.data_dir / "cloud_cache"
-            if cache_dir.exists():
-                for item in cache_dir.rglob("*"):
-                    if item.is_file() and not item.name.endswith(".tmp"):
-                        files_to_pack.append((item, f"cloud_cache/{item.relative_to(cache_dir).as_posix()}"))
 
         if layout.auth_dir.exists():
-            for item in layout.auth_dir.rglob("*"):
+            for item in layout.auth_dir.glob("*"):
                 if item.is_file() and not item.name.endswith(".tmp"):
-                    files_to_pack.append((item, f"telegram_auth/{item.relative_to(layout.auth_dir).as_posix()}"))
+                    files_to_pack.append((item, f"telegram_auth/{item.name}"))
 
         if not files_to_pack:
             return False
@@ -615,35 +595,10 @@ async def restore_from_telegram(
                 else:
                     dest = layout.data_dir / filename
                 dest.parent.mkdir(parents=True, exist_ok=True)
-                # Evitar traversal y no destruir datos locales existentes.
-                root = layout.auth_dir if filename.startswith("telegram_auth/") else layout.data_dir
-                relative_name = filename.replace("telegram_auth/", "", 1) if filename.startswith("telegram_auth/") else filename
-                dest = root / relative_name
-                try:
-                    dest.resolve().relative_to(root.resolve())
-                except ValueError:
-                    raise ValueError("Ruta insegura en el respaldo")
-                if dest.exists():
-                    continue
-                dest.parent.mkdir(parents=True, exist_ok=True)
                 with zf.open(member) as source, open(dest, "wb") as target:
                     shutil.copyfileobj(source, target)
                 restored_files += 1
                 total_bytes += member.file_size
-
-        # Si la ruta absoluta del volumen cambió, reparar referencias del caché.
-        history_path = Path(layout.files_map.get("task_history.json", layout.data_dir / "task_history.json"))
-        if history_path.exists():
-            try:
-                history = json.loads(history_path.read_text(encoding="utf-8"))
-                for entries in history.values():
-                    if isinstance(entries, list):
-                        for entry in entries:
-                            if isinstance(entry, dict) and isinstance(entry.get("cached_paths"), list):
-                                entry["cached_paths"] = [str(layout.data_dir / "cloud_cache" / Path(cp).name) for cp in entry["cached_paths"]]
-                history_path.write_text(json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8")
-            except Exception:
-                pass
 
         log_inst.info(f"✅ ¡Restauración completada con éxito! {restored_files} archivos restaurados.")
         return restored_files, total_bytes
@@ -718,6 +673,10 @@ def link_user_app(token: str, user_id: int, full_name: str, username: str | None
     data = _load_json(APP_LINKS_FILE)
     if not isinstance(data, dict):
         data = {}
+    
+    # Seguridad: Si el codigo ya esta vinculado a OTRO usuario, no permitir reasignarlo
+    if code in data and data[code].get('user_id') and int(data[code]['user_id']) != int(user_id):
+        return {"error": "already_claimed", "message": "Este codigo ya fue vinculado a otro usuario"}
     balance = get_user_balance(user_id)
     user_handle = f"@{username}" if username else ""
     user_plan_id = get_user_plan(user_id)
@@ -754,6 +713,163 @@ def link_user_app(token: str, user_id: int, full_name: str, username: str | None
     return data[code]
 
 
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import threading
+from urllib.parse import parse_qs, urlparse
+
+class JKBotApiHandler(BaseHTTPRequestHandler):
+    """API REST ligera para sincronizar y verificar la app Android en tiempo real."""
+    def do_GET(self):
+        parsed = urlparse(self.path)
+        qs = parse_qs(parsed.query)
+        if parsed.path == "/api/health":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps({"status": "ok", "bot": "@downfree_jk_bot", "creator": "ᴊᴀᴋᴜᴅᴏѕʜʏꫂꤪꤨᴼᶠᶜ"}).encode())
+            return
+        elif parsed.path == "/api/cloud_files":
+            uid_str = (qs.get("user_id") or [""])[0].strip()
+            files_list = []
+            try:
+                history_data = _load_json(TASK_HISTORY_FILE)
+                if isinstance(history_data, list):
+                    for task in history_data:
+                        if not uid_str or str(task.get("user_id")) == uid_str:
+                            files_list.append({
+                                "id": str(task.get("id", task.get("task_id", len(files_list)))),
+                                "file_name": task.get("filename", task.get("file_name", "Archivo ToDus")),
+                                "file_size": task.get("size", task.get("file_size", 0)),
+                                "download_url": task.get("url", task.get("download_url", "")),
+                                "created_at": task.get("created_at", task.get("timestamp", "Hoy")),
+                                "expires_at": task.get("expires_at", None)
+                            })
+            except Exception:
+                pass
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps({"status": "ok", "files": files_list}).encode())
+            return
+        elif parsed.path == "/api/check_link":
+            code = (qs.get("code") or [""])[0].strip().upper()
+            data = _load_json(APP_LINKS_FILE)
+            entry = data.get(code)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            if entry and entry.get("active", True):
+                try:
+                    uid = int(entry.get("user_id", 0))
+                    if uid > 0:
+                        p_key = get_user_plan(uid)
+                        p_info = get_plan_info(p_key)
+                        u_usage = get_user_daily_usage(uid)
+                        d_limit = p_info.get("daily_bytes", 2 * GIB)
+                        entry["plan_key"] = p_key
+                        entry["plan_display"] = p_info.get("display", "Plan Gratis")
+                        entry["storage_hours"] = p_info.get("storage_hours", 12)
+                        entry["daily_bytes"] = d_limit if d_limit != float('inf') else -1
+                        entry["used_bytes"] = u_usage
+                        entry["remaining_bytes"] = max(0, d_limit - u_usage) if d_limit != float('inf') else -1
+                except Exception:
+                    pass
+                self.wfile.write(json.dumps({"status": "linked", "data": entry}).encode())
+            else:
+                self.wfile.write(json.dumps({"status": "waiting"}).encode())
+            return
+        elif parsed.path == "/api/user_info":
+            uid_str = (qs.get("user_id") or [""])[0].strip()
+            try:
+                user_id = int(uid_str)
+            except ValueError:
+                self.send_response(400)
+                self.end_headers()
+                return
+            plan_key = get_user_plan(user_id)
+            plan_info = get_plan_info(plan_key)
+            usage = get_user_daily_usage(user_id)
+            daily_limit = plan_info.get("daily_bytes", 2 * GIB)
+            remaining = max(0, daily_limit - usage) if daily_limit != float('inf') else float('inf')
+            balance = get_user_balance(user_id)
+            resp = {
+                "user_id": user_id,
+                "plan": plan_key,
+                "plan_display": plan_info.get("display", "Plan Gratis"),
+                "badge": plan_info.get("badge", "🆓"),
+                "storage_hours": plan_info.get("storage_hours", 12),
+                "daily_bytes": daily_limit if daily_limit != float('inf') else -1,
+                "used_bytes": usage,
+                "remaining_bytes": remaining if remaining != float('inf') else -1,
+                "balance": f"{balance}$ CUP",
+                "creator": "ᴊᴀᴋᴜᴅᴏѕʜʏꫂꤪꤨᴼᶠᶜ"
+            }
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps(resp).encode())
+            return
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def do_POST(self):
+        parsed = urlparse(self.path)
+        if parsed.path == "/api/report_error":
+            length = int(self.headers.get('content-length', 0))
+            body_bytes = self.rfile.read(length) if length > 0 else b'{}'
+            try:
+                req = json.loads(body_bytes.decode('utf-8'))
+                title = req.get("title", "Sin titulo")
+                description = req.get("description", "Sin descripcion")
+                user_alias = req.get("user_alias", "Invitado")
+                user_id = req.get("user_id", "Desconocido")
+                email = req.get("email", "No especificado")
+                logs = req.get("logs", "Sin logs adicionales")
+
+                report_text = (
+                    "⚠️ Nuevo mensaje de reporte\n\n"
+                    f"Título De Reporte: {title}\n\n"
+                    f"descripción: {description}\n\n"
+                    f"👤 Usuario: {user_alias} (ID: {user_id})\n"
+                    f"📧 Correo: {email}\n\n"
+                    f"```Logs de la aplicación:\n\n{logs}\n\n```"
+                )
+                import urllib.request
+                owner_target = int(os.getenv("OWNER_TELEGRAM_ID", OWNER_TELEGRAM_ID))
+                tg_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+                tg_payload = json.dumps({"chat_id": owner_target, "text": report_text, "parse_mode": "Markdown"}).encode()
+                req_tg = urllib.request.Request(tg_url, data=tg_payload, headers={"Content-Type": "application/json"})
+                urllib.request.urlopen(req_tg, timeout=5)
+            except Exception:
+                pass
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps({"status": "ok", "message": "Reporte recibido"}).encode())
+            return
+        self.send_response(404)
+        self.end_headers()
+
+    def log_message(self, format, *args):
+        pass
+
+
+def start_api_server():
+    port = int(os.getenv("PORT", os.getenv("API_PORT", 8080)))
+    try:
+        server = HTTPServer(("0.0.0.0", port), JKBotApiHandler)
+        log.info(f"🌐 Servidor API de Vinculación activo en puerto {port}")
+        server.serve_forever()
+    except Exception as exc:
+        log.warning(f"Aviso iniciando servidor API en puerto {port}: {exc}")
+
+
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not is_private_update(update):
         return
@@ -766,12 +882,12 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     args = getattr(context, "args", []) or []
     if args:
         first_arg = str(args[0]).strip()
-        # Detección de código único de start desde JK Downloader (ej: /start JK-839210)
-        if first_arg.upper().startswith("JK") or first_arg.upper().startswith("LINK_JK") or first_arg.upper().startswith("APP_"):
-            token_code = first_arg.upper()
+        clean_arg = first_arg.replace("-", "").strip().upper()
+        # Detección de código de vinculación (ej: FLNPYZA9R, JK-839210, etc.)
+        if (clean_arg.startswith("JK") or clean_arg.startswith("LINK") or clean_arg.startswith("APP") or len(clean_arg) == 9 or (len(clean_arg) >= 6 and not clean_arg.isdigit())):
+            token_code = clean_arg
             avatar_url = None
             try:
-                # Obtener la foto de perfil real del usuario en Telegram
                 photos = await context.bot.get_user_profile_photos(user.id, limit=1)
                 if photos.total_count > 0:
                     photo_file = await context.bot.get_file(photos.photos[0][-1].file_id)
@@ -779,39 +895,48 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             except Exception:
                 pass
 
-            link_user_app(
-                token_code,
-                user.id,
-                getattr(user, "full_name", "") or getattr(user, "first_name", ""),
-                getattr(user, "username", None),
-                photo_url=avatar_url
-            )
-            user_balance = get_user_balance(user.id)
+            user_fullname = getattr(user, "full_name", "") or getattr(user, "first_name", "")
             user_handle = f"@{user.username}" if user.username else ""
-            link_lines = [
-                f"👤 ɴᴏᴍʙʀᴇ: {getattr(user, 'full_name', '') or getattr(user, 'first_name', '')}",
-                f"🆔 ɪᴅ ᴛᴇʟᴇɢʀᴀᴍ: {mono:{user.id}}",
-            ]
-            if user_handle:
-                link_lines.append(f"🔗 ᴜꜱᴜᴀʀɪᴏ: {user_handle}")
-            link_lines.extend([
-                "🛡️ ᴇꜱᴛᴀᴅᴏ: ᴠᴇʀɪꜰɪᴄᴀᴅᴏ · ᴀᴄᴛɪᴠᴏ",
-                f"💳 ꜱᴀʟᴅᴏ ᴇɴ ᴄᴜᴇɴᴛᴀ: {user_balance}$ ᴄᴜᴘ",
-                f"🔑 ᴄóᴅɪɢᴏ: {mono:{token_code}}",
-                "",
-                "✅ ¡TU SOLICITUD ESTÁ VERIFICADA CON ÉXITO!",
-                "📲 Ya puedes volver a la aplicación.",
-                "",
-                "🚀 ᴍᴏᴅ ʙʏ ᴊᴀᴋᴜᴅᴏѕʜʏꫂꤪꤨᴼᶠᶜ",
-                "📢 ᴄᴀɴᴀʟ: t.me/gg_no_rot"
-            ])
+            user_plan_id = get_user_plan(user.id)
+            plan_info = get_plan_info(user_plan_id)
+
+            # Guardar tanto en formato limpio como con guiones
+            link_user_app(token_code, user.id, user_fullname, getattr(user, "username", None), photo_url=avatar_url)
+            link_user_app(first_arg.strip().upper(), user.id, user_fullname, getattr(user, "username", None), photo_url=avatar_url)
+
+            reply_text = (
+                "🎉 *¡Cuenta vinculada exitosamente con JK Downloader!*\n\n"
+                f"👤 *Usuario:* {user_handle or user_fullname}\n"
+                f"🆔 *ID:* `{user.id}`\n"
+                f"⭐ *Plan:* {plan_info.get('display', 'Plan Gratis')} ({plan_info.get('daily_label', '5.00 GB')})\n"
+                f"📦 *Retención en Nube:* {plan_info.get('storage_hours', 12)} horas\n\n"
+                "Ya puedes gestionar tus descargas desde la aplicación.\n\n"
+                "📢 *Canal Oficial:* https://t.me/gg_no_rot\n"
+                "🚀 *Mod by ᴊᴀᴋᴜᴅᴏѕʜʏꫂꤪꤨᴼᶠᶜ*"
+            )
+
             await update.effective_message.reply_text(
-                card("⚡ ᴠɪɴᴄᴜʟᴀᴄɪóɴ ᴊᴋ ᴅᴏᴡɴʟᴏᴀᴅᴇʀ", link_lines),
+                reply_text,
+                parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup([
                     [btn("☁️ ᴠᴇʀ ᴍɪ ɴᴜʙᴇ", callback_data="history")],
                     [btn("🏠 ɪɴɪᴄɪᴏ", callback_data="home")]
                 ]),
             )
+            try:
+                owner_id = int(os.getenv("OWNER_TELEGRAM_ID", OWNER_TELEGRAM_ID))
+                if owner_id and owner_id != user.id:
+                    await context.bot.send_message(
+                        chat_id=owner_id,
+                        text=card("⚡ ɴᴜᴇᴠᴀ ᴠɪɴᴄᴜʟᴀᴄɪóɴ ᴅᴇ ᴀᴘᴘ", [
+                            f"👤 Usuario: {getattr(user, 'full_name', '')} ({user_handle})",
+                            f"🆔 ID Telegram: {user.id}",
+                            f"🔑 Código: {token_code}",
+                            "📲 Vinculado exitosamente a JK Downloader.",
+                        ]),
+                    )
+            except Exception:
+                pass
             return
 
         match = re.fullmatch(r"ref_(\d+)", first_arg, re.IGNORECASE)
@@ -837,6 +962,17 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
                                 f"💳 Saldo actual: {get_user_balance(referrer_id)}$",
                             ]),
                         )
+                        owner_id = int(os.getenv("OWNER_TELEGRAM_ID", OWNER_TELEGRAM_ID))
+                        if owner_id and owner_id != user.id:
+                            await context.bot.send_message(
+                                chat_id=owner_id,
+                                text=card("👑 ɴᴜᴇᴠᴏ ʀᴇꜰᴇʀɪᴅᴏ ᴇɴ ᴇʟ ʙᴏᴛ", [
+                                    f"👤 Nuevo: {user.full_name} (@{user.username or 'sin_alias'})",
+                                    f"🆔 ID Usuario: {user.id}",
+                                    f"🤝 Invitado por: {referrer_id}",
+                                    "💰 Bono de 5$ acreditado al referidor.",
+                                ]),
+                            )
                     except Exception:
                         pass
                     schedule_data_backup(context.application, "recompensa de referido")
@@ -1085,9 +1221,7 @@ def get_user_plan_entry(user_id: int) -> dict:
 
 
 def get_user_plan(user_id: int) -> str:
-    raw = get_user_plan_entry(user_id).get("plan", "free")
-    # Compatibilidad con nombres de planes de versiones anteriores.
-    return {"vip": "vip_basic", "ultra": "owner", "honor": "owner"}.get(raw, raw)
+    return get_user_plan_entry(user_id).get("plan", "free")
 
 
 def get_user_queue_limit(user_id: int) -> int:
@@ -1185,8 +1319,7 @@ async def broadcast_admin_message(bot_obj, body: str) -> tuple[int, int, int]:
 
 
 def get_plan_info(plan_key: str) -> dict:
-    canonical = {"vip": "vip_basic", "ultra": "owner", "honor": "owner"}.get(plan_key, plan_key)
-    return PLANS.get(canonical, PLANS["free"])
+    return PLANS.get(plan_key, PLANS["free"])
 
 
 def _today_key() -> str:
@@ -1450,10 +1583,6 @@ def expire_cloud_files() -> int:
                     delete_from_todus_s3(url)
                 except Exception:
                     success = False
-            # Con auto-renovación, conservar el caché y reintentar en el siguiente ciclo
-            # si ToDus estuvo caído justo cuando tocaba renovar.
-            if CLOUD_AUTO_RENEW and entry.get("cached_paths"):
-                continue
             # Purgar caché local del disco al culminar el tiempo del plan
             for cp in entry.get("cached_paths", []):
                 try:
@@ -1507,15 +1636,10 @@ async def _silently_update_message_keyboard(
 
 
 def renew_prematurely_deleted_cloud_files(application: Application | None = None) -> int:
-    """Renueva enlaces antes de que ToDus los elimine y recupera los ya caídos.
-
-    El TTL del plan es la duración de cada enlace individual. Mientras exista el
-    caché local persistente, el guardián crea un nuevo enlace antes de vencer y
-    actualiza ``expires_at``. Así el archivo puede permanecer disponible durante
-    todo el tiempo necesario sin cobrar cuota por la renovación interna.
+    """Detecta archivos borrados en ToDus S3 antes de culminar el tiempo del plan
+    (ej. plan Free de 12h borrado en ToDus a las 2h) y los vuelve a subir en silencio,
+    renovando el archivo y manteniendo el servicio 100% activo sin fallos.
     """
-    if not CLOUD_AUTO_RENEW:
-        return 0
     data = all_task_history()
     now = datetime.now(timezone.utc)
     renewed_count = 0
@@ -1526,71 +1650,79 @@ def renew_prematurely_deleted_cloud_files(application: Application | None = None
             continue
         try:
             user_id = int(user_id_str)
-        except (TypeError, ValueError):
+        except ValueError:
             continue
 
         for entry in entries:
             if not isinstance(entry, dict) or not entry.get("expires_at"):
                 continue
             try:
-                exp_dt = datetime.fromisoformat(str(entry["expires_at"]))
+                exp_dt = datetime.fromisoformat(entry["expires_at"])
                 if exp_dt.tzinfo is None:
                     exp_dt = exp_dt.replace(tzinfo=timezone.utc)
             except Exception:
                 continue
-            cached_paths = entry.get("cached_paths", [])
+
+            # Si ya culminó formalmente el plan, no se renueva
+            if exp_dt <= now:
+                continue
+
             urls = entry.get("urls", [])
-            if not isinstance(cached_paths, list) or not cached_paths:
-                continue
-            if not isinstance(urls, list):
-                urls = []
-
-            expired = exp_dt <= now
-            near_expiry = (exp_dt - now).total_seconds() <= CLOUD_RENEW_BEFORE_SECONDS
-            missing = False
-            if urls and not expired and not near_expiry:
-                # Detectar eliminación prematura incluso fuera de la ventana.
-                missing = any(not check_cloud_url_healthy(url) for url in urls)
-            if not (expired or near_expiry or missing):
+            cached_paths = entry.get("cached_paths", [])
+            if not urls or not cached_paths:
                 continue
 
-            reason = "vencimiento próximo" if near_expiry and not expired else ("enlace ausente" if missing else "enlace vencido")
-            log.info("Cloud Guardian: renovando '%s' (user %s, %s)", entry.get("filename"), user_id, reason)
-            new_urls = []
-            renewal_success = True
-            for idx, cp_str in enumerate(cached_paths):
-                cp = Path(str(cp_str))
-                if not cp.is_file() or cp.stat().st_size == 0:
-                    renewal_success = False
-                    log.warning("Cloud Guardian: caché ausente para task=%s: %s", entry.get("task_id"), cp)
-                    break
-                try:
-                    part_fname = entry.get("filename", "file.bin")
-                    if len(cached_paths) > 1:
-                        part_fname = f"{part_fname}.part{idx + 1}"
-                    new_url, _ = upload_to_todus_s3(
-                        path=cp,
-                        download_name=part_fname,
-                        telegram_user_id=user_id,
-                        timeout_seconds=7200,
-                    )
-                    new_urls.append(new_url)
-                except Exception as err:
-                    log.warning("Cloud Guardian: fallo al renovar task=%s: %s", entry.get("task_id"), err)
-                    renewal_success = False
+            # Comprobar si ToDus borró el enlace antes de tiempo
+            needs_renewal = False
+            for url in urls:
+                if not check_cloud_url_healthy(url):
+                    needs_renewal = True
                     break
 
-            if renewal_success and new_urls:
-                entry["urls"] = new_urls
-                entry["expires_at"] = storage_expiry(user_id, now).isoformat()
-                entry["silently_renewed_at"] = now.isoformat()
-                entry["renewal_count"] = int(entry.get("renewal_count", 0) or 0) + 1
-                renewed_count += 1
-                changed = True
-                if application and entry.get("chat_id") and entry.get("message_id"):
-                    asyncio.create_task(_silently_update_message_keyboard(
-                        application, entry["chat_id"], entry["message_id"], entry.get("task_id", ""), new_urls
-                    ))
+            if needs_renewal:
+                log.info(
+                    "🛡️ Cloud Guardian: Archivo '%s' (user %s) borrado antes de tiempo en ToDus. Re-subiendo en silencio...",
+                    entry.get("filename"), user_id,
+                )
+                new_urls = []
+                renewal_success = True
+                for idx, cp_str in enumerate(cached_paths):
+                    cp = Path(cp_str)
+                    if not cp.is_file() or cp.stat().st_size == 0:
+                        renewal_success = False
+                        break
+                    try:
+                        part_fname = entry.get("filename", "file.bin")
+                        if len(cached_paths) > 1:
+                            part_fname = f"{part_fname}.part{idx+1}"
+                        new_url, _ = upload_to_todus_s3(
+                            path=cp,
+                            download_name=part_fname,
+                            telegram_user_id=user_id,
+                            timeout_seconds=7200,
+                        )
+                        new_urls.append(new_url)
+                    except Exception as err:
+                        log.warning("Fallo al re-subir silenciosamente a ToDus: %s", err)
+                        renewal_success = False
+                        break
+
+                if renewal_success and new_urls:
+                    entry["urls"] = new_urls
+                    entry["silently_renewed_at"] = now.isoformat()
+                    renewed_count += 1
+                    changed = True
+                    log.info("✅ Cloud Guardian: Archivo renovado con éxito para usuario %s. Nuevos URLs: %s", user_id, new_urls)
+                    if application and entry.get("chat_id") and entry.get("message_id"):
+                        asyncio.create_task(
+                            _silently_update_message_keyboard(
+                                application,
+                                entry["chat_id"],
+                                entry["message_id"],
+                                entry.get("task_id", ""),
+                                new_urls,
+                            )
+                        )
 
     if changed:
         _save_json(HISTORY_DATA_FILE, data)
@@ -1630,7 +1762,7 @@ async def cloud_expiration_monitor(application: Application) -> None:
             raise
         except Exception as exc:
             log.warning("Error en monitor Cloud Guardian: %s", exc)
-        await asyncio.sleep(CLOUD_CHECK_INTERVAL_SECONDS)
+        await asyncio.sleep(60)
 
 
 def clear_all_task_history() -> int:
@@ -1673,7 +1805,7 @@ def quota_exhausted_text() -> str:
         "   📦 15 GB / día",
         "",
         "👑 Premium: 1000$",
-        "   📦 Ilimitado / día",
+        "   📦 20GB / día",
         "",
         "🛒 Comprar plan o esperar",
         "a mañana la restauración.",
@@ -2174,7 +2306,7 @@ def normalize_apk_filename(path: Path, filename: str) -> str:
                 or suffix in {".xapk", ".apks"}
             ):
                 raise ValueError(
-                    "El enlace contiene un paquete dividido (XAPK/APKS), no un APK único instalable."
+                    "El enlace contiene un pete dividido (XAPK/APKS), no un APK único instalable."
                 )
             is_apk = (
                 "AndroidManifest.xml" in names
@@ -2293,21 +2425,14 @@ async def download_telegram_media(message, mtproto_client=None, progress_callbac
 
             if original is None:
                 try:
-                    msgs = await mtproto_client.get_messages(message.chat_id, ids=message.message_id)
+                    chat_peer = await mtproto_client.get_entity(message.chat_id)
+                    msgs = await mtproto_client.get_messages(chat_peer, ids=message.message_id)
                     if isinstance(msgs, (list, tuple)) and msgs:
                         original = msgs[0]
                     elif msgs:
                         original = msgs
-                except Exception as first_exc:
-                    try:
-                        chat_peer = await mtproto_client.get_entity(message.chat_id)
-                        msgs = await mtproto_client.get_messages(chat_peer, ids=message.message_id)
-                        if isinstance(msgs, (list, tuple)) and msgs:
-                            original = msgs[0]
-                        elif msgs:
-                            original = msgs
-                    except Exception as exc:
-                        log.warning("No se pudo resolver mensaje MTProto por chat_id: %s", exc)
+                except Exception as exc:
+                    log.warning("No se pudo resolver entidad MTProto por chat_id: %s", exc)
 
             if original is None or not getattr(original, "media", None):
                 fwd_chat = getattr(message, "forward_from_chat", None)
@@ -2341,11 +2466,6 @@ async def download_telegram_media(message, mtproto_client=None, progress_callbac
                         await asyncio.sleep(1.5)
 
         if not mtproto_downloaded:
-            if size_hint and size_hint > BOT_API_DOWNLOAD_LIMIT:
-                raise ValueError(
-                    "Archivo muy grande para la Bot API de Telegram (más de 20 MiB). "
-                    "Configura TELEGRAM_API_ID y TELEGRAM_API_HASH para descargarlo con MTProto."
-                )
             for attempt in range(3):
                 path.unlink(missing_ok=True)
                 try:
@@ -2612,7 +2732,7 @@ def plans_text(user_id: int, bot_username: str | None = None) -> str:
         "🆓 Gratis · 2 GB/día · 12h nube",
         "⭐ VIP Básico · 10 GB/día · 250$",
         "💎 VIP Medio · 15 GB/día · 500$",
-        "👑 Premium · Ilimitado · 1000$",
+        "👑 Premium · 20GB /día · 1000$",
         "",
         "💡 Copia tu enlace abajo para",
         "compartirlo con tus amigos.",
@@ -2629,7 +2749,7 @@ def plans_text(user_id: int, bot_username: str | None = None) -> str:
 def plans_keyboard(user_id: int, bot_username: str | None = None) -> InlineKeyboardMarkup:
     link = referral_link(user_id, bot_username)
     share_url = "https://t.me/share/url?url=" + quote(link, safe="") + "&text=" + quote(
-        "Únete a JK Down Bot y recibe 5$ de bienvenida.", safe=""
+        "┎ ✅ ɪɴᴠɪᴛᴀᴄɪᴏɴ ᴠɪᴘ\n┠─────────────────────\n┠ ǫᴜᴇ ᴘᴜᴇᴅᴇ ʜᴀᴄᴇʀ?\n┃\n┠ ᴅᴇѕᴄᴀʀɢᴀ ɢʀᴀᴛɪѕ 🇨🇺\n┠ ᴅᴇѕᴄᴀʀɢᴀ ᴅᴇ ʏᴏᴜᴛᴜʙᴇ...\n┠ ᴅᴇ ᴛᴇʟᴇɢʀᴀᴍ, ғᴀᴄᴇʙᴏᴏᴄᴋ...\n┠ ᴇɴᴛʀᴀ ʏ ɢᴀɴᴀ 10-5$\n┃\n┖ ᴇѕᴛᴇ ʙᴏᴛ ʟᴇ ᴇɴᴠɪᴀѕ ᴜɴ ᴇɴʟᴀᴄᴇ ᴏ ʟᴇ ʀᴇᴇɴᴠɪᴀѕ ᴅᴇѕᴅᴇ ᴛᴇʟᴇɢʀᴀᴍ ᴜɴᴀ ᴀᴘᴋ, ᴠɪᴅᴇᴏ, ᴍᴜѕɪᴄᴀ, ᴇᴄᴛ... ᴇʟ ʙᴏᴛ ᴛᴇ ᴍᴀɴᴅᴀ ʟᴏ ǫᴜᴇ ᴇɴᴠɪᴀѕᴛᴇ ᴘᴀʀᴀ ʟᴀ ɴᴜʙᴇ ʏ ᴛᴇ ᴅᴀ ᴜɴ ᴇʟᴀᴄᴇ ᴅᴇ ᴅᴇѕᴄᴀʀɢᴀ ѕɪɴ ɴᴇᴄᴇѕɪᴅᴀᴅ ᴅᴇ ᴍʙ", safe=""
     )
     return InlineKeyboardMarkup([
         [btn("🛒 ᴠᴇʀ ᴘʟᴀɴᴇꜱ ʏ ᴄᴏᴍᴘʀᴀʀ", callback_data="plans:buy")],
@@ -2799,13 +2919,23 @@ def transfer_complete_text(filename: str = "", size: int = 0, parts: int = 1,
 
 
 def admin_panel_text() -> str:
+    app_users_cnt = 0
+    try:
+        app_data = _load_json(APP_LINKS_FILE)
+        if isinstance(app_data, dict):
+            app_users_cnt = len(set(v.get("user_id") for v in app_data.values() if isinstance(v, dict) and v.get("user_id")))
+    except Exception:
+        pass
+
     lines = [
+        f"📱 Usuarios en la App JK Downloader: {app_users_cnt}",
+        "",
         "Planes configurados:",
         "",
         f"🆓 Gratis: {MAX_FILE_MB_FREE / 1024:.1f} GB/día",
         "⭐ VIP Básico: 10 GB (250$)",
         "💎 VIP Medio: 15 GB (500$)",
-        "👑 Premium: Ilimitado (1000$)",
+        "👑 Premium: 20GB (1000$)",
         "",
         "Selecciona una acción:",
     ]
@@ -3261,8 +3391,6 @@ async def process_task(job: TransferTask, application: Application) -> None:
                 "storage_duration_hours": get_plan_info(get_user_plan(job.user_id)).get("storage_hours", 12),
                 "duration": max(0, job.updated_at - job.created_at),
                 "state": "done",
-                "storage_backend": "todus_s3",
-                "source_kind": job.source_kind,
                 "cached_paths": cached_paths,
                 "chat_id": getattr(job.status_message, "chat_id", None) if job.status_message else None,
                 "message_id": getattr(job.status_message, "message_id", None) if job.status_message else None,
@@ -3288,6 +3416,25 @@ async def process_task(job: TransferTask, application: Application) -> None:
             reply_markup=final_keyboard,
             disable_web_page_preview=True,
         )
+        # Notificar al Owner sobre la descarga completada en la nube
+        try:
+            owner_id = int(os.getenv("OWNER_TELEGRAM_ID", OWNER_TELEGRAM_ID))
+            if owner_id and owner_id != job.user_id:
+                first_url = links[0][1] if links else "N/A"
+                await application.bot.send_message(
+                    chat_id=owner_id,
+                    text=card("📥 ɴᴜᴇᴠᴀ ᴅᴇꜱᴄᴀʀɢᴀ ᴇɴ ʟᴀ ɴᴜʙᴇ", [
+                        f"👤 Usuario: ID {job.user_id}",
+                        f"📁 Archivo: {filename}",
+                        f"📦 Tamaño: {format_bytes(size)} ({len(job.part_urls)} partes)",
+                        f"☁️ Enlace ToDus S3: {first_url}",
+                        f"⏳ Expira: {expiry_label(expires_at)}",
+                    ]),
+                    disable_web_page_preview=True,
+                )
+        except Exception as notify_err:
+            log.debug("Aviso notificar al owner: %s", notify_err)
+
         if temp_path:
             temp_path.unlink(missing_ok=True)
             job.temp_path = None
@@ -4971,7 +5118,7 @@ async def post_init(application: Application) -> None:
     application.bot_data["quota_reset_task"] = asyncio.create_task(quota_reset_notifier(application))
     await asyncio.to_thread(expire_cloud_files)
     application.bot_data["cloud_expiration_task"] = asyncio.create_task(cloud_expiration_monitor(application))
-    log.info("Bot activo: @%s (%s)", identity.username, getattr(identity, "first_name", ""))
+    log.info("Bot activo: @%s (%s)", identity.username, identity.first_name)
 
     # Iniciar respaldos periódicos automáticos cada 10 minutos
     if backup_chat_id:
@@ -4981,7 +5128,7 @@ async def post_init(application: Application) -> None:
                 getattr(application.bot, "token", ""),
                 backup_chat_id,
                 backup_layout,
-                interval_seconds=max(30, int(os.getenv("TELEGRAM_BACKUP_INTERVAL_SECONDS", "300") or 300)),
+                interval_seconds=600,
                 lock=application.bot_data["telegram_backup_lock"],
                 logger=log,
             )
@@ -5004,36 +5151,32 @@ async def post_init(application: Application) -> None:
             asyncio.create_task(task_worker(application)) for _ in range(MAX_CONCURRENT_UPLOADS)
         ]
 
-    # MTProto es opcional; solo se inicia si ambas credenciales están configuradas.
+    # Iniciar cliente Telethon MTProto usando las credenciales embebidas
     application.bot_data["mtproto_client"] = None
-    runtime_api_id = int(os.getenv("TELEGRAM_API_ID", str(ID_API_TELEGRAM)) or 0)
-    runtime_api_hash = os.getenv("TELEGRAM_API_HASH", TELEGRAM_API_HASH).strip()
-    if not (runtime_api_id and runtime_api_hash):
-        log.info("MTProto no configurado; los archivos dentro del límite de Bot API seguirán funcionando.")
-    else:
+    try:
+        session_path = TELEGRAM_AUTH_DIR / "mtproto_bot.session"
+        mtproto_client = TelegramClient(str(session_path), ID_API_TELEGRAM, TELEGRAM_API_HASH)
+        await mtproto_client.start(bot_token=application.bot.token)
+        application.bot_data["mtproto_client"] = mtproto_client
+        application.bot_data["mtproto_message_cache"] = {}
+
+        async def cache_media_update(event):
+            if not getattr(event.message, "media", None):
+                return
+            cache = application.bot_data["mtproto_message_cache"]
+            cache[(event.chat_id, event.id)] = event.message
+            if len(cache) > 128:
+                cache.pop(next(iter(cache)))
+
+        mtproto_client.add_event_handler(cache_media_update, events.NewMessage)
         try:
-            session_path = TELEGRAM_AUTH_DIR / "mtproto_bot.session"
-            mtproto_client = TelegramClient(str(session_path), runtime_api_id, runtime_api_hash)
-            await mtproto_client.start(bot_token=application.bot.token)
-            application.bot_data["mtproto_client"] = mtproto_client
-            application.bot_data["mtproto_message_cache"] = {}
+            await mtproto_client.catch_up()
+        except Exception:
+            pass
+        log.info("MTProto listo con API ID %s", ID_API_TELEGRAM)
+    except Exception as exc:
+        log.warning("MTProto no iniciado: %s (el bot continuará operando vía Bot API)", exc)
 
-            async def cache_media_update(event):
-                if not getattr(event.message, "media", None):
-                    return
-                cache = application.bot_data["mtproto_message_cache"]
-                cache[(event.chat_id, event.id)] = event.message
-                if len(cache) > 128:
-                    cache.pop(next(iter(cache)))
-
-            mtproto_client.add_event_handler(cache_media_update, events.NewMessage)
-            try:
-                await mtproto_client.catch_up()
-            except Exception:
-                pass
-            log.info("MTProto listo con API ID %s", runtime_api_id)
-        except Exception as exc:
-            log.warning("MTProto no iniciado: %s (el bot continuará operando vía Bot API)", exc)
 
 async def post_shutdown(application: Application) -> None:
     for task_name in ("quota_reset_task", "cloud_expiration_task", "telegram_backup_task"):
@@ -5049,13 +5192,9 @@ async def post_shutdown(application: Application) -> None:
 
 
 def main() -> None:
-    token = TELEGRAM_BOT_TOKEN.strip()
+    token = TOKEN_BOT_DE_TELEGRAM.strip()
     if not token:
-        raise RuntimeError(
-            "Falta el token del bot. Configura TELEGRAM_BOT_TOKEN "
-            "(también se aceptan TOKEN_BOT_DE_TELEGRAM, BOT_TOKEN o TELEGRAM_TOKEN) "
-            "en Railway → Variables/Secrets."
-        )
+        raise RuntimeError("Falta TOKEN_BOT_DE_TELEGRAM")
 
     defaults = Defaults(parse_mode=ParseMode.HTML)
     application = (
@@ -5094,6 +5233,7 @@ def main() -> None:
         | filters.PHOTO | filters.ANIMATION | filters.VIDEO_NOTE | filters.VOICE
     )
     application.add_handler(MessageHandler(media_filters, handle_media))
+    threading.Thread(target=start_api_server, daemon=True).start()
     log.info("JK Bot ToDus completamente inicializado y listo para correr")
     application.run_polling(drop_pending_updates=False)
 

@@ -1,6 +1,6 @@
-# JK Bot — Telegram/YouTube a ToDus S3
+# JK Bot — Telegram a ToDus S3
 
-Bot privado de Telegram que recibe documentos, vídeos, audios, fotos, reenvíos de Telegram y enlaces HTTP/HTTPS directos o páginas públicas compatibles con yt-dlp (incluido YouTube); todo archivo terminado se sube a ToDus S3 mediante `PUT` y devuelve un enlace público. No requiere cuenta ToDus, número de teléfono ni contraseña ToDus. Cada objeto queda bajo `users/tg_<ID>/telegram/...` y conserva una extensión segura (por ejemplo, `.apk` o `.mp4`).
+Bot privado de Telegram que recibe documentos, vídeos, audios, fotos y enlaces HTTP/HTTPS directos o páginas públicas de vídeo compatibles con yt-dlp; los sube a ToDus S3 y devuelve un enlace público de descarga. La subida usa `PUT` directo a `s3.todus.cu/stream`; no requiere cuenta ToDus, número de teléfono ni contraseña ToDus. Cada objeto queda bajo `users/tg_<ID>/telegram/...` y conserva una extensión segura (por ejemplo, `.apk` o `.mp4`).
 
 ## Estilo y uso
 
@@ -32,7 +32,7 @@ Bot privado de Telegram que recibe documentos, vídeos, audios, fotos, reenvíos
 <!-- Cambio documental de verificación de persistencia; no modifica la ejecución del bot. -->
 <!-- Prueba de deploy inocua: no modifica el comportamiento del bot. -->
 
-- `TELEGRAM_BOT_TOKEN`: token del bot creado con `@BotFather`. Es obligatorio. Por compatibilidad también se aceptan `TOKEN_BOT_DE_TELEGRAM`, `BOT_TOKEN` y `TELEGRAM_TOKEN`; configura solo uno.
+- `TELEGRAM_BOT_TOKEN`: token del bot creado con `@BotFather`. Es obligatorio.
 - `TELEGRAM_BACKUP_CHAT_ID`: ID numérico o `@usuario` del canal o grupo de Telegram donde se publicará y fijará el respaldo cifrado. También se aceptan `BACKUP_CHAT_ID` o, como fallback, `TELEGRAM_CHANNEL_ID`. El bot debe poder enviar documentos allí; para fijar y reemplazar el mismo mensaje necesita permisos de fijado/edición.
 - `TELEGRAM_BACKUP_INTERVAL_SECONDS`: intervalo del respaldo automático; por defecto son 300 segundos y el mínimo es 30.
 - `TELEGRAM_API_ID` y `TELEGRAM_API_HASH`: opcionales; permiten descargar reenvíos de Telegram de más de aproximadamente 20 MiB. No sustituyen `TELEGRAM_BOT_TOKEN`.
@@ -45,7 +45,7 @@ Bot privado de Telegram que recibe documentos, vídeos, audios, fotos, reenvíos
 
 Configura `TELEGRAM_BACKUP_CHAT_ID` con el ID numérico o `@usuario` del chat de respaldo y agrega el bot con permiso para publicar, editar, borrar y fijar documentos. El bot consulta el chat y su mensaje fijado con la Bot API. Al iniciar, descarga, valida y restaura los archivos que falten **antes de abrir su sesión MTProto**; genera una copia inicial, otra después de cada cambio de datos, otra según `TELEGRAM_BACKUP_INTERVAL_SECONDS` y una última al cerrar de forma ordenada. Cada copia refleja exactamente los archivos de estado actuales: los historiales y sesiones eliminados localmente no se fusionan ni reaparecen desde una copia anterior. Las actualizaciones se suben como un documento cifrado nuevo, se leen y validan desde Telegram y se fijan antes de desfijar la versión anterior. La tarjeta del backup usa la hora local de Cuba.
 
-El archivo único contiene los JSON de planes, cuotas, historial de tareas, caché local de recuperación y reporte administrativo acumulativo, además de la carpeta real de autenticación de Telegram `telegram_auth/` (sesión SQLite de Telethon cuando MTProto está configurado). Se comprimen los datos con gzip y se cifran con AES-256-GCM; la clave se deriva del `TELEGRAM_BOT_TOKEN`, sin una tercera variable. No se envían ni registran sesiones sin cifrar. Después de la primera copia, cada actualización reemplaza el documento del mismo mensaje fijado mediante `editMessageMedia`; si Telegram rechaza la edición, el bot borra la copia anterior y publica inmediatamente la nueva, manteniendo una sola copia visible y sin acumular spam. Los datos no se eliminan durante un deploy: solo cambian cuando una acción autorizada del bot los modifica. Los registros anteriores se mantienen dentro del JSON acumulativo. La Bot API alojada limita `getFile` a 20 MiB, así que una copia mayor se rechaza con su tamaño y la última copia válida queda intacta. Mantén el mismo token del bot para poder descifrar las copias existentes; al rotarlo, las copias anteriores no se podrán restaurar.
+El archivo único contiene los JSON de planes, cuotas, historial de tareas y reporte administrativo acumulativo, además de la carpeta real de autenticación de Telegram `telegram_auth/` (sesión SQLite de Telethon cuando MTProto está configurado). Se comprimen los datos con gzip y se cifran con AES-256-GCM; la clave se deriva del `TELEGRAM_BOT_TOKEN`, sin una tercera variable. No se envían ni registran sesiones sin cifrar. Después de la primera copia, cada actualización reemplaza el documento del mismo mensaje fijado mediante `editMessageMedia`; si Telegram rechaza la edición, el bot borra la copia anterior y publica inmediatamente la nueva, manteniendo una sola copia visible y sin acumular spam. Los datos no se eliminan durante un deploy: solo cambian cuando una acción autorizada del bot los modifica. Los registros anteriores se mantienen dentro del JSON acumulativo. La Bot API alojada limita `getFile` a 20 MiB, así que una copia mayor se rechaza con su tamaño y la última copia válida queda intacta. Mantén el mismo token del bot para poder descifrar las copias existentes; al rotarlo, las copias anteriores no se podrán restaurar.
 
 Este proyecto es un bot de Telegram: no usa Baileys ni tiene una carpeta `auth_info` de WhatsApp. La antigua sesión MTProto era solo de memoria; ahora, cuando se habilitan las credenciales MTProto opcionales ya documentadas, se guarda en `telegram_auth/` y se incluye cifrada. El token del bot sigue siendo el único requisito para el respaldo.
 
@@ -77,7 +77,7 @@ En Windows, puedes usar 7-Zip para recomponer las partes según el tipo de archi
 
 - `MAX_CONCURRENT_UPLOADS`: número de tareas procesadas simultáneamente.
 - `MAX_PENDING_PER_USER`: cupo de tareas por usuario. La cola reparte turnos entre usuarios.
-- Las tareas activas son temporales, pero el historial, cuotas, usuarios y `cloud_cache/` se guardan en `BOT_DATA_DIR`. En Railway debes montar un Volume en `/data`; sin un volumen ningún bot puede conservar archivos locales entre redeploys.
+- Las tareas e historial se guardan en memoria y se reinician cuando se reinicia el proceso. Los archivos temporales se eliminan al terminar.
 - Las subidas usan una ruta aleatoria dentro de `users/tg_<ID>/telegram/`; el nombre original se conserva como nombre de descarga, no como parte de la ruta.
 - Los APK se validan como paquetes ZIP con `AndroidManifest.xml`, se sirven como `application/vnd.android.package-archive` y descarga adjunta; los MP4 se sirven como `video/mp4` y contenido reproducible en línea.
 - Los documentos reenviados desde Telegram se descargan como bytes originales, conservan su nombre/MIME cuando Telegram los proporciona y se validan antes de subirlos; no se convierten ni se re-empacan.
@@ -85,15 +85,6 @@ En Windows, puedes usar 7-Zip para recomponer las partes según el tipo de archi
 - Solo se aceptan enlaces HTTP/HTTPS públicos. No se admiten URLs con credenciales ni direcciones locales/privadas. Para páginas de vídeo se usa yt-dlp, que cubre sus extractores/plataformas vigentes; los vídeos deben ser públicos y accesibles sin iniciar sesión, salvo que el administrador configure cookies autorizadas. No se pueden sortear restricciones de acceso, DRM ni bloqueos de la plataforma, y no se garantiza soporte para toda web. Los enlaces a archivos directos siguen descargándose por HTTP(S). Las páginas HTML sin un vídeo extraíble se rechazan en vez de guardarse como archivos diminutos.
 - Una página de Play Store no es un APK descargable: el bot solo puede procesar un APK si recibe un enlace directo al archivo o el archivo reenviado. Una película de una aplicación como Movie Base solo se puede descargar si el enlace entrega un archivo reproducible sin DRM y sin controles de acceso; no se extraen ni se evitan protecciones de contenido.
 - Si recibe una URL `play.google.com/store/apps/details?...`, el bot ahora lo explica directamente y no guarda la página HTML como si fuera una aplicación. Para instalar Firefox, por ejemplo, usa la ficha oficial de Play Store en el teléfono; para subir un APK al bot, envía el `.apk` o una URL directa y autorizada al archivo.
-Como referencia para aplicaciones propias o autorizadas existe [EFForg/apkeep](https://github.com/EFForg/apkeep), con licencia MIT. Su modo Google Play requiere un correo y un token AAS, no funciona con aplicaciones pagadas o con DRM y debe usarse respetando los términos de Google; por eso no se ejecuta automáticamente desde una ficha pública ni se incluyen credenciales en este bot.
-
-## Persistencia S3 y Cloud Guardian
-
-TTL configurado: Gratis 12 horas, VIP Básico 24 horas, VIP Medio 48 horas, VIP Premium 72 horas y Owner 72 horas. Cuotas: Gratis 5 GB, VIP Básico 10 GB, VIP Medio 15 GB, VIP Premium 20 GB y Honor infinito sin límite. El vencimiento se calcula al completar la subida y se conserva en el historial.
-
-Todas las rutas de Telegram y YouTube convergen en `upload_to_todus_s3`; la descarga local solo es una etapa temporal antes del `PUT`. El plan Gratis conserva cada objeto durante 12 horas. Un guardián comprueba los enlaces cada 30 segundos y los renueva preventivamente antes de vencer; si ToDus los elimina antes, también los repone desde `cloud_cache/`, sin sumar cuota ni ranking. La subida original sí suma bytes a cuota, historial y reporte acumulado; una reposición interna no duplica esos contadores. El caché se incluye en el respaldo de migración y se reconstruyen sus rutas al restaurar.
-
-La persistencia real requiere configurar `BOT_DATA_DIR=/data` y un Volume de Railway. `CLOUD_AUTO_RENEW=true` renueva cada enlace 5 minutos antes de vencer; si ToDus falla durante ese momento, el caché no se borra y el siguiente ciclo reintenta. El caché solo se elimina cuando el usuario borra voluntariamente la entrada del historial. ToDus S3 es un servicio externo: el bot no puede garantizar una duración mayor que el TTL configurado si el proveedor elimina o bloquea objetos, pero el guardián detecta esa pérdida y reintenta la reposición mientras exista el caché.
 
 ## Ejecutar localmente
 

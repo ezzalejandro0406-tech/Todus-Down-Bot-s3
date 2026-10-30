@@ -7,16 +7,12 @@ services:
       - .env
     environment:
       TMPDIR: /tmp
-      BOT_DATA_DIR: /app/data
-      CLOUD_AUTO_RENEW: "true"
     init: true
     read_only: true
     volumes:
-      - bot-data:/app/data
       - bot-tmp:/tmp
     security_opt:
       - no-new-privileges:true
 
 volumes:
-  bot-data:
   bot-tmp:
